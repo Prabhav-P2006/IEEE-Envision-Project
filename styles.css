@@ -1,0 +1,119 @@
+/* General Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: whitesmoke;
+}
+
+/* Calculator Box */
+#inputBox {
+    width: 300px;
+    text-align: right;
+    background-color: darkslategrey;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Display Values */
+#answer {
+    font-size: 16px;
+    margin: 5px 0;
+    color: cadetblue;
+}
+
+#currentValue {
+    font-size: 32px;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+/* Button Menu */
+#buttonMenu {
+    width: 320px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+}
+
+td {
+    padding: 5px;
+}
+
+/* Buttons */
+button {
+    width: 60px;
+    height: 60px;
+    font-size: 22px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+/* Number Buttons */
+button[id="0"], button[id="1"], button[id="2"], button[id="3"],
+button[id="4"], button[id="5"], button[id="6"], button[id="7"],
+button[id="8"], button[id="9"], button[id="."] {
+    background-color: #f8f9fa;
+    color: black;
+}
+
+button[id="0"]:hover, button[id="1"]:hover, button[id="2"]:hover,
+button[id="3"]:hover, button[id="4"]:hover, button[id="5"]:hover,
+button[id="6"]:hover, button[id="7"]:hover, button[id="8"]:hover,
+button[id="9"]:hover, button[id="."]:hover {
+    background-color: #e0e0e0;
+}
+
+/* Operator Buttons */
+button[id="/"], button[id="x"], button[id="-"], button[id="+"], button[id="%"] {
+    background-color: #f39c12;
+    color: white;
+}
+
+button[id="/"]:hover, button[id="x"]:hover, button[id="-"]:hover, button[id="+"]:hover, button[id="%"]:hover {
+    background-color: #e67e22;
+}
+
+/* Equals Button */
+button[id="="] {
+    background-color: #2ecc71;
+    color: white;
+}
+
+button[id="="]:hover {
+    background-color: #27ae60;
+}
+
+/* Clear Button */
+button[id="clear-all"] {
+    background-color: #e74c3c;
+    color: white;
+}
+
+button[id="clear-all"]:hover {
+    background-color: #c0392b;
+}
+
+/* Bracket Buttons */
+button[id="open-bracket"], button[id="close-bracket"] {
+    background-color: #95a5a6;
+    color: white;
+}
+
+button[id="open-bracket"]:hover, button[id="close-bracket"]:hover {
+    background-color: #7f8c8d;
+}
