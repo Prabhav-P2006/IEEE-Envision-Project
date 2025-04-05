@@ -26,10 +26,13 @@
                     {% if container.status == 'running' %}
                         <a href="{% url 'container_action' container.id 'stop' %}" class="btn btn-danger btn-sm">Stop</a>
                         <a href="{% url 'container_action' container.id 'restart' %}" class="btn btn-warning btn-sm">Restart</a>
+                        <a href="{% url 'container_action' container.id 'pause' %}" class="btn btn-warning btn-sm">Pause</a>
+                        <a href="{% url 'container_action' container.id 'delete' %}" class="btn btn-warning btn-sm">Delete</a>
                         <a href="{% url 'container_logs' container.id %}" class="btn btn-info btn-sm">Logs</a>
 
                     {% else %}
                         <a href="{% url 'container_action' container.id 'start' %}" class="btn btn-success btn-sm">Start</a>
+                        <a href="{% url 'container_action' container.id 'unpause' %}" class="btn btn-warning btn-sm">Resume</a>
                     {% endif %}
                 </td>
             </tr>
