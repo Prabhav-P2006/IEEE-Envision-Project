@@ -5,6 +5,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 import docker
 from django.contrib.auth.decorators import login_required
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import ContainerSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 def register(request):
     if request.method == 'POST':
@@ -26,34 +32,62 @@ def logout_view(request):
     return render(request, 'registration/logout.html')
 
 @login_required
+@api_view(['GET'])
 def container_list(request):
     containers = get_all_containers()
-    return render(request, 'containers/container_list.html', {'containers': containers})
+    if request.accepts('text/html'):
+        return render(request, 'containers/container_list.html', {'containers': containers})
+
+    serializer = ContainerSerializer(containers, many = True)
+    return Response({
+        'count': len(containers), 
+        'results': serializer.data 
+        })
+
 
 @login_required
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def container_action(request, container_id, action):
     client = get_docker_client()
     if not client:
-        messages.error(request, 'Failed to connect to Docker')
-        return redirect('container_list')
+        if request.accepts('text/html'):
+            messages.error(request, 'Failed to connect to Docker')
+            return redirect('container_list')
+        return Response({'error': 'Dcoker connection failed'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     try:
         container = client.containers.get(container_id)
-        if action == 'start':
-            container.start()
-            messages.success(request, f'Container {container.name} started successfully')
-        elif action == 'stop':
-            container.stop()
-            messages.success(request, f'Container {container.name} stopped successfully')
-        elif action == 'restart':
-            container.restart()
-            messages.success(request, f'Container {container.name} restarted successfully')
+        action_methods = {
+            'start': container.start,
+            'stop': container.stop,
+            'restart': container.restart,
+            'pause': container.pause,
+            'unpause': container.unpause,
+            'delete': container.remove
+        }
+        
+        if action in action_methods:
+            action_methods[action]()
+            msg = f'Container {container.name} {action}ed successfully'
+            
+            if request.accepts('text/html'):
+                messages.success(request, msg)
+                return redirect('container_list')
+            return Response({'status': 'success', 'message': msg})
+            
+        return Response({'error': 'Invalid action'}, status=status.HTTP_400_BAD_REQUEST)
+
     except docker.errors.APIError as e:
-        messages.error(request, f'Error performing action: {str(e)}')
-    
-    return redirect('container_list')
+        error_msg = f'Error performing action: {str(e)}'
+        if request.accepts('text/html'):
+            messages.error(request, error_msg)
+            return redirect('container_list')
+        return Response({'error': error_msg}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required
+@api_view(['GET'])
 def container_logs(request, container_id):
     client = get_docker_client()
     try:
@@ -75,3 +109,4 @@ def container_logs(request, container_id):
         messages.error(request, f'Unexpected error: {str(e)}')
     
     return render(request, 'containers/logs.html', {'logs': logs})
+
