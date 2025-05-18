@@ -49,7 +49,7 @@ def container_list_api(request):
 
 
 @login_required
-@api_view(['POST'])
+@api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def container_action(request, container_id, action):

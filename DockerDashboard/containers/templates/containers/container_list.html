@@ -1,43 +1,100 @@
-
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
     <h1 class="mb-4">Docker Containers</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for container in containers %}
-            <tr>
-                <td>{{ container.id|truncatechars:12 }}</td>
-                <td>{{ container.name }}</td>
-                <td>
-                    <span class="badge bg-{% if container.status == 'running' %}success{% else %}danger{% endif %}">
-                        {{ container.status }}
-                    </span>
-                </td>
-                <td>
-                    {% if container.status == 'running' %}
-                        <a href="{% url 'container_action' container.id 'stop' %}" class="btn btn-danger btn-sm">Stop</a>
-                        <a href="{% url 'container_action' container.id 'restart' %}" class="btn btn-warning btn-sm">Restart</a>
-                        <a href="{% url 'container_action' container.id 'pause' %}" class="btn btn-warning btn-sm">Pause</a>
-                        <a href="{% url 'container_action' container.id 'delete' %}" class="btn btn-warning btn-sm">Delete</a>
-                        <a href="{% url 'container_logs' container.id %}" class="btn btn-info btn-sm">Logs</a>
 
-                    {% else %}
-                        <a href="{% url 'container_action' container.id 'start' %}" class="btn btn-success btn-sm">Start</a>
-                        <a href="{% url 'container_action' container.id 'unpause' %}" class="btn btn-warning btn-sm">Resume</a>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" id="containerSearch" class="form-control" placeholder="Search containers...">
+        </div>
+    </div>
+
+    <div class="row g-3">
+        {% for container in containers %}
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-truncate" title="{{ container.name }}">{{ container.name }}</h5>
+                    <p class="card-text small text-muted">ID: {{ container.id|truncatechars:12 }}</p>
+
+                    <span class="badge mb-3
+                        {% if 'running' in container.status %}bg-success
+                        {% elif 'paused' in container.status %}bg-warning text-dark
+                        {% elif 'exited' in container.status %}bg-danger
+                        {% else %}bg-secondary
+                        {% endif %}">
+                        {{ container.status|capfirst }}
+                    </span>
+
+                    <div class="mt-auto d-flex flex-wrap gap-2">
+                        {% if 'running' in container.status %}
+                            <a href="{% url 'container_action' container.id 'stop' %}" 
+                               class="btn btn-outline-danger btn-sm" title="Stop"
+                               onclick="return confirm('Stop this container?');">
+                                <i class="bi bi-stop-fill"></i>
+                            </a>
+                            <a href="{% url 'container_action' container.id 'restart' %}" 
+                               class="btn btn-outline-warning btn-sm" title="Restart"
+                               onclick="return confirm('Restart this container?');">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </a>
+                            <a href="{% url 'container_action' container.id 'pause' %}" 
+                               class="btn btn-outline-secondary btn-sm" title="Pause"
+                               onclick="return confirm('Pause this container?');">
+                                <i class="bi bi-pause-fill"></i>
+                            </a>
+                            <a href="{% url 'container_action' container.id 'delete' %}" 
+                               class="btn btn-outline-dark btn-sm" title="Delete"
+                               onclick="return confirm('Delete this container?');">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                            <a href="{% url 'container_logs' container.id %}" 
+                               class="btn btn-outline-info btn-sm" title="Logs">
+                                <i class="bi bi-journal-text"></i>
+                            </a>
+
+                        {% elif 'paused' in container.status %}
+                            <a href="{% url 'container_action' container.id 'unpause' %}" 
+                               class="btn btn-outline-success btn-sm" title="Resume"
+                               onclick="return confirm('Resume this container?');">
+                                <i class="bi bi-play-fill"></i>
+                            </a>
+                            <a href="{% url 'container_logs' container.id %}" 
+                               class="btn btn-outline-info btn-sm" title="Logs">
+                                <i class="bi bi-journal-text"></i>
+                            </a>
+
+                        {% else %}
+                            <a href="{% url 'container_action' container.id 'start' %}" 
+                               class="btn btn-outline-success btn-sm" title="Start"
+                               onclick="return confirm('Start this container?');">
+                                <i class="bi bi-play-fill"></i>
+                            </a>
+                            <a href="{% url 'container_action' container.id 'delete' %}" 
+                               class="btn btn-outline-dark btn-sm" title="Delete"
+                               onclick="return confirm('Delete this container?');">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                            <a href="{% url 'container_logs' container.id %}" 
+                               class="btn btn-outline-info btn-sm" title="Logs">
+                                <i class="bi bi-journal-text"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
+<script>
+    document.getElementById('containerSearch').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        document.querySelectorAll('.card').forEach(card => {
+            const name = card.querySelector('.card-title').textContent.toLowerCase();
+            card.style.display = name.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
 {% endblock %}
