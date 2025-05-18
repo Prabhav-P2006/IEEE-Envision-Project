@@ -32,17 +32,20 @@ def logout_view(request):
     return render(request, 'registration/logout.html')
 
 @login_required
-@api_view(['GET'])
-def container_list(request):
+def container_list_page(request):
     containers = get_all_containers()
-    if request.accepts('text/html'):
-        return render(request, 'containers/container_list.html', {'containers': containers})
+    return render(request, 'containers/container_list.html', {'containers': containers})
 
-    serializer = ContainerSerializer(containers, many = True)
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def container_list_api(request):
+    containers = get_all_containers()
+    serializer = ContainerSerializer(containers, many=True)
     return Response({
         'count': len(containers), 
         'results': serializer.data 
-        })
+    })
 
 
 @login_required
