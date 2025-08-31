@@ -1,7 +1,3 @@
-Great—I checked the “Container Lens” page for your project and gathered key details to build a more comprehensive and context-aware README for your GitHub repository. Here’s a polished **README.md** draft for your **IEEE-Envision-Project** (DockerDashboard):
-
----
-
 # IEEE-Envision-Project (DockerDashboard)
 
 **A web-based Docker container management system built with Django and the Python Docker SDK.** It offers users a secure dashboard to manage Docker containers through actions like start, stop, pause, resume, delete, and view logs—without needing CLI commands. ([IEEE NITK | Corpus][1])
@@ -162,7 +158,3 @@ Based on Django and Docker SDK documentation
 ```
 
 ---
-
-Let me know if you'd like to enhance it with additional elements—like a Docker setup (Dockerfile or `docker-compose.yml`), instructions on deploying with Gunicorn/Nginx, CI/CD guidance, or anything else!
-
-[1]: https://ieee.nitk.ac.in/virtual_expo/report/123?utm_source=chatgpt.com "Container Lens | Virtual Expo | Corpus - IEEE NITK"
